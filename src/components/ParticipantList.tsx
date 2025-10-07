@@ -1,18 +1,20 @@
-import type { Participant } from '../types'
+import type { Participant, PlaceCandidate } from '../types'
 import { ParticipantCard } from './ParticipantCard'
 
 interface ParticipantListProps {
   participants: Participant[]
   onUpdate: (id: string, next: Participant) => void
   onDelete: (id: string) => void
-  onRequestMap: (id: string) => void
+  onKeywordSearch?: (keyword: string) => Promise<PlaceCandidate[]>
+  onAddressSearch?: (query: string) => Promise<PlaceCandidate[]>
+  kakaoReady?: boolean
 }
 
-export function ParticipantList({ participants, onUpdate, onDelete, onRequestMap }: ParticipantListProps) {
+export function ParticipantList({ participants, onUpdate, onDelete, onKeywordSearch, onAddressSearch, kakaoReady }: ParticipantListProps) {
   if (participants.length === 0) {
     return (
       <div className="card-surface text-sm text-slate-300">
-        참여자를 추가하고 지도에서 위치를 지정하면 추천이 시작됩니다.
+        참여자를 추가하고 지점의 위치를 지정하면 추천을 시작해요.
       </div>
     )
   }
@@ -25,7 +27,9 @@ export function ParticipantList({ participants, onUpdate, onDelete, onRequestMap
           participant={participant}
           onChange={(next) => onUpdate(participant.id, next)}
           onDelete={() => onDelete(participant.id)}
-          onRequestMap={() => onRequestMap(participant.id)}
+          onKeywordSearch={onKeywordSearch}
+          onAddressSearch={onAddressSearch}
+          kakaoReady={kakaoReady}
         />
       ))}
     </div>

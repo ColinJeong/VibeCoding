@@ -10,6 +10,7 @@ type KeywordSearchOptions = {
 type GeocoderApi = {
   reverseGeocode: (loc: LatLng) => Promise<string | undefined>
   keywordSearch: (keyword: string, options?: KeywordSearchOptions) => Promise<PlaceCandidate[]>
+  addressSearch: (query: string) => Promise<PlaceCandidate[]>
 }
 
 export function useGeocoder(ready: boolean): GeocoderApi {
@@ -79,9 +80,39 @@ export function useGeocoder(ready: boolean): GeocoderApi {
     })
   }, [ready])
 
+  const addressSearch = useCallback(async (query: string) => {
+    if (!ready || !geocoderRef.current) {
+      return []
+    }
+    return new Promise<PlaceCandidate[]>((resolve) => {
+      geocoderRef.current.addressSearch(query, (result: any[], status: string) => {
+        if (status !== (window as any).kakao.maps.services.Status.OK || !Array.isArray(result)) {
+          resolve([])
+          return
+        }
+        const mapped = result
+          .map((item) => {
+            const lat = Number(item.y)
+            const lng = Number(item.x)
+            if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+            return {
+              placeId: item.address_name ?? `${lat},${lng}`,
+              name: item.address_name ?? '주소',
+              address: item.road_address?.address_name || item.address_name || '',
+              latlng: { lat, lng },
+              kakaoMapUrl: `https://map.kakao.com/link/map/${encodeURIComponent(item.address_name ?? '주소')},${lat},${lng}`,
+            } as PlaceCandidate
+          })
+          .filter(Boolean) as PlaceCandidate[]
+        resolve(mapped)
+      })
+    })
+  }, [ready])
+
   return {
     reverseGeocode,
     keywordSearch,
+    addressSearch,
   }
 }
 export type { KeywordSearchOptions }
