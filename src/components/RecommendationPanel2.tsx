@@ -31,9 +31,9 @@ export function RecommendationPanel({ recommendation, places, loadingPlaces, par
     const run = async () => {
       try {
         const [subways, buses, parkings] = await Promise.all([
-          keywordSearch('지?�철??, { location: center, radius: 1500, size: 10 }),
-          keywordSearch('버스?�류??, { location: center, radius: 800, size: 10 }),
-          keywordSearch('주차??, { location: center, radius: 1500, size: 10 }),
+          keywordSearch('지하철역', { location: center, radius: 1500, size: 10 }),
+          keywordSearch('버스정류장', { location: center, radius: 800, size: 10 }),
+          keywordSearch('주차장', { location: center, radius: 1500, size: 10 }),
         ])
         const pickNearest = (arr: PlaceCandidate[]) => {
           let best: { item: PlaceCandidate; d: number } | null = null
@@ -51,11 +51,8 @@ export function RecommendationPanel({ recommendation, places, loadingPlaces, par
     void run()
   }, [kakaoReady, keywordSearch, recommendation.center.lat, recommendation.center.lng])
 
-  // movement ETA handled by ParticipantMovement
-
-  
   const kakaoRouteLink = useMemo(() => {
-    const name = encodeURIComponent('추천 지??)
+    const name = encodeURIComponent('추천 지점')
     return `https://map.kakao.com/link/to/${name},${recommendation.center.lat},${recommendation.center.lng}`
   }, [recommendation.center.lat, recommendation.center.lng])
 
@@ -64,29 +61,30 @@ export function RecommendationPanel({ recommendation, places, loadingPlaces, par
   return (
     <section className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <SummaryCard title="추천 ?�도" value={recommendation.center.lat.toFixed(6)} suffix="°" />
+        <SummaryCard title="추천 위도" value={recommendation.center.lat.toFixed(6)} suffix="°" />
         <SummaryCard title="추천 경도" value={recommendation.center.lng.toFixed(6)} suffix="°" />
         <div className="card-surface flex flex-col gap-2">
-          <span className="label-text">추천 지??/span>
+          <span className="label-text">추천 지점</span>
           <a className="inline-flex w-fit items-center gap-2 rounded-xl bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-amber-500/30 transition hover:bg-amber-300" href={kakaoRouteLink} target="_blank" rel="noreferrer">
-            길찾�?          </a>
+            길찾기
+          </a>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="card-surface">
           <div className="flex items-center justify-between">
-            <span className="label-text">가까운 ?�중교??/span>
+            <span className="label-text">가까운 대중교통</span>
             <TransitChips value={transitTab} onChange={setTransitTab} />
           </div>
           <div className="mt-3 text-sm text-slate-200">
-            {loadingTransit ? '불러?�는 �?..' : activeTransitPlace ? (
+            {loadingTransit ? '불러오는 중...' : activeTransitPlace ? (
               <>
                 <p className="font-semibold">{activeTransitPlace.name}</p>
                 <p className="mt-0.5 text-xs text-slate-400">{activeTransitPlace.address}</p>
               </>
             ) : (
-              <span className="text-slate-400">??/span>
+              <span className="text-slate-400">—</span>
             )}
           </div>
         </div>
@@ -97,19 +95,19 @@ export function RecommendationPanel({ recommendation, places, loadingPlaces, par
         {kakaoReady ? (
           <RecommendationMapPreview center={recommendation.center} participants={participants} kakaoReady={kakaoReady} />
         ) : (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300">카카??지??SDK가 ?�직 로드?��? ?�았?�요.</div>
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300">카카오 지도 SDK가 아직 로드되지 않았어요.</div>
         )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="card-surface">
-          <h2 className="text-lg font-semibold text-white">참여???�동</h2>
-          <p className="mt-1 text-sm text-slate-400">?�름 · 직선거리 · ETA(?�보/?�동�??�전�??�중교??</p>
+          <h2 className="text-lg font-semibold text-white">참여자 이동</h2>
+          <p className="mt-1 text-sm text-slate-400">이름 · 직선거리 · ETA(도보/자동차/자전거/대중교통)</p>
           <ParticipantMovement center={recommendation.center} participants={participants} />
         </div>
         <div className="card-surface">
-          <h2 className="text-lg font-semibold text-white">주�? ?�소 TOP3</h2>
-          <p className="mt-1 text-sm text-slate-400">중앙 좌표 반경 1km ??추천 ?�소?�요.</p>
+          <h2 className="text-lg font-semibold text-white">주변 장소 TOP3</h2>
+          <p className="mt-1 text-sm text-slate-400">중앙 좌표 반경 1km 내 추천 장소에요.</p>
           <PlaceCandidatesList places={places} loading={loadingPlaces} />
         </div>
       </div>
@@ -118,9 +116,9 @@ export function RecommendationPanel({ recommendation, places, loadingPlaces, par
       <div className="md:hidden">
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-slate-950/90 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
-            <span className="text-xs text-slate-400">추천 지??/span>
+            <span className="text-xs text-slate-400">추천 지도</span>
             <button type="button" className="rounded-md border border-white/10 px-3 py-1 text-xs text-slate-200" onClick={() => setIsMapOpenMobile((v) => !v)}>
-              {isMapOpenMobile ? '?�기' : '?�기'}
+              {isMapOpenMobile ? '접기' : '열기'}
             </button>
           </div>
           {isMapOpenMobile ? (
@@ -128,7 +126,7 @@ export function RecommendationPanel({ recommendation, places, loadingPlaces, par
               {kakaoReady ? (
                 <RecommendationMapPreview center={recommendation.center} participants={participants} kakaoReady={kakaoReady} />
               ) : (
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300">카카??지??SDK가 ?�직 로드?��? ?�았?�요.</div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300">카카오 지도 SDK가 아직 로드되지 않았어요.</div>
               )}
             </div>
           ) : null}
@@ -152,10 +150,10 @@ function SummaryCard({ title, value, suffix }: { title: string; value: string; s
 
 function PlaceCandidatesList({ places, loading }: { places: PlaceCandidate[]; loading: boolean }) {
   if (loading) {
-    return <p className="mt-4 text-sm text-slate-400">주�? ?�소�?불러?�는 중이?�요...</p>
+    return <p className="mt-4 text-sm text-slate-400">주변 장소를 불러오는 중이에요...</p>
   }
   if (!loading && places.length === 0) {
-    return <p className="mt-4 text-sm text-slate-400">주�? 추천 ?�소가 ?�어??</p>
+    return <p className="mt-4 text-sm text-slate-400">주변 추천 장소가 없어요.</p>
   }
   return (
     <div className="mt-4 flex flex-col gap-3">

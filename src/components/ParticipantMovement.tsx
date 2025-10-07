@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Participant, Recommendation } from '../types'
 import { haversineDistance } from '../utils/geo'
 import { getEta, formatEta } from '../lib/eta'
@@ -61,4 +61,3 @@ export function ParticipantMovement({ center, participants }: { center: Recommen
     </div>
   )
 }
-

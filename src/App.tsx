@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+﻿import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ControlsBar } from './components/ControlsBar'
 import { Header } from './components/Header'
 import { ParticipantList } from './components/ParticipantList'
-import { RecommendationPanel } from './components/RecommendationPanel'
+import { RecommendationPanel } from './components/RecommendationPanel2'
 import { useGeocoder } from './hooks/useGeocoder'
 import { useKakaoLoader } from './hooks/useKakaoLoader'
 import { useRecommend } from './hooks/useRecommend'
@@ -54,7 +54,7 @@ function App() {
 
     setLoadingPlaces(true)
     const timeoutId = window.setTimeout(() => {
-      kakaoKeywordSearch('카페', {
+      kakaoKeywordSearch('移댄럹', {
         location: { lat: centerLat, lng: centerLng },
         radius: 1000,
         size: 10,
@@ -64,7 +64,7 @@ function App() {
           setUiError(undefined)
         })
         .catch(() => {
-          setUiError('주변 장소를 불러오지 못했어요')
+          setUiError('二쇰? ?μ냼瑜?遺덈윭?ㅼ? 紐삵뻽?댁슂')
           setPlaces([])
         })
         .finally(() => {
@@ -95,7 +95,7 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-950 pb-20">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 pb-24 pt-12">
-        <Header title="Vibe Coding" subtitle="모두가 공평한 약속 장소 찾기, 카카오맵 기반 도우미" />
+        <Header title="Vibe Coding" subtitle="Find a fair meetup place" />
         {(kakaoError || uiError) && (
           <div className="rounded-2xl border border-red-400/40 bg-red-500/10 p-4 text-sm text-red-200">
             {kakaoError || uiError}
@@ -103,7 +103,7 @@ function App() {
         )}
         {!kakaoReady && appKey && !kakaoError ? (
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-200">
-            카카오 지도 SDK를 불러오는 중입니다...
+            移댁뭅??吏??SDK瑜?遺덈윭?ㅻ뒗 以묒엯?덈떎...
           </div>
         ) : null}
         <ControlsBar mode={mode} onModeChange={setMode} onAddParticipant={handleAddParticipant} />
@@ -130,3 +130,6 @@ function App() {
 }
 
 export default App
+
+
+
