@@ -59,8 +59,16 @@ function App() {
         radius: 1000,
         size: 10,
       })
-        .then((result) => {
-          setPlaces(result.slice(0, 3))
+        .then(async (result) => {
+          if (!result || result.length === 0) {
+            const loc = { lat: centerLat, lng: centerLng }
+            let widened = await kakaoKeywordSearch('카페', { location: loc, radius: 3000, size: 15 })
+            if (!widened || widened.length === 0) {
+              widened = await kakaoKeywordSearch('음식점', { location: loc, radius: 3000, size: 15 })
+            }
+            result = widened
+          }
+          setPlaces((result || []).slice(0, 3))
           setUiError(undefined)
         })
         .catch(() => {
